@@ -25,16 +25,7 @@ public class RoundRobin extends SchedulingAlgorithm{
             for (Process p: processes) {
                 // check arrival of proccesses
                 if (p.getArrivalTime() == i) {
-                    // run this process if there's no other process running or waiting in ready poll
-                    if (!runningProcess && readyPoll.isEmpty()) {
-                        CPUprocess = p;
-                        addProcessToSchedule(i, CPUprocess);
-                        runningProcess = true;
-                    }
-                    // else add it the treeset for sorting (highest priority first)
-                    else {
-                        arrivedProcess.add(p);
-                    }
+                    arrivedProcess.add(p);
                 }  
             }
             // add the sorted arrived processes into the ready poll
@@ -89,13 +80,13 @@ public class RoundRobin extends SchedulingAlgorithm{
     
     public static void main(String[] args) {
         // Example 1
-        RoundRobin rr = new RoundRobin(3);
-        rr.addProcess(new Process(0, 6, 3));
-        rr.addProcess(new Process(1, 4, 3));
-        rr.addProcess(new Process(5, 6, 1));
-        rr.addProcess(new Process(6, 6, 1));
-        rr.addProcess(new Process(7, 6, 5));
-        rr.addProcess(new Process(8, 6, 6));
+        // RoundRobin rr = new RoundRobin(3);
+        // rr.addProcess(new Process(0, 6, 3));
+        // rr.addProcess(new Process(1, 4, 3));
+        // rr.addProcess(new Process(5, 6, 1));
+        // rr.addProcess(new Process(6, 6, 1));
+        // rr.addProcess(new Process(7, 6, 5));
+        // rr.addProcess(new Process(8, 6, 6));
 
         // Example 2
         // RoundRobin rr = new RoundRobin(4);
@@ -109,6 +100,15 @@ public class RoundRobin extends SchedulingAlgorithm{
         // rr.addProcess(new Process(0, 3));
         // rr.addProcess(new Process(0, 1));
         // rr.addProcess(new Process(0, 7));
+
+        // Example 4
+        RoundRobin rr = new RoundRobin(3);
+        rr.addProcess(new Process(0, 8, 2));
+        rr.addProcess(new Process(4, 15, 5));
+        rr.addProcess(new Process(7, 9, 3));
+        rr.addProcess(new Process(13, 5, 1));
+        rr.addProcess(new Process(9, 13, 4));
+        rr.addProcess(new Process(0, 6, 1));
 
         rr.simulateSchedule();
 
