@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -8,12 +7,10 @@ import java.util.TreeSet;
 public class NonPreemptivePriority extends SchedulingAlgorithm {
     private Process CPUprocess;
     private LinkedHashSet<Process> readyPoll = new LinkedHashSet<>();
-    private ArrayList<Process> sameArrivalTime = new ArrayList<>();
     
     @Override
     public void simulateSchedule() {
         boolean runningProcess = false;
-        boolean arrived = false;
         int inCPUtime = 0;
 
         super.initializeSchedule();
@@ -22,30 +19,10 @@ public class NonPreemptivePriority extends SchedulingAlgorithm {
             TreeSet<Process> arrivedProcess = new TreeSet<>(Collections.reverseOrder());
             for (Process p: processes) {
                 if (p.getArrivalTime() == i) {
-                    arrived = true;
-                    sameArrivalTime.add(p);
+                    arrivedProcess.add(p);
                 }
             }
-            if (arrived) {
-                if (sameArrivalTime.size() > 1) {
-                    PriorityQueue<Process> pq = new PriorityQueue<>(sameArrivalTime.size(), (p1, p2) -> p1.getPriority() - p2.getPriority());
-                    pq.addAll(sameArrivalTime);
-                    sameArrivalTime.clear();
-                    sameArrivalTime.addAll(pq);
-                }
-                if (!runningProcess && readyPoll.isEmpty()) {
-                    CPUprocess = sameArrivalTime.get(0);
-                    sameArrivalTime.remove(0);
-                    addProcessToSchedule(i, CPUprocess);
-                    runningProcess = true;
-                } else {
-                    for (Process p: sameArrivalTime) {
-                        arrivedProcess.add(p);
-                    }
-                }
-                arrived = false;
-            }
-
+            
             for (Process ap: arrivedProcess) {
                 readyPoll.add(ap);
             }
@@ -61,7 +38,6 @@ public class NonPreemptivePriority extends SchedulingAlgorithm {
                 if (readyPoll.iterator().hasNext()) {
                     Process nextProcess = readyPoll.iterator().next();
                     CPUprocess = nextProcess;
-                    sameArrivalTime.remove(0);
                     addProcessToSchedule(i, CPUprocess);
                     readyPoll.remove(nextProcess);
                     runningProcess = true;
@@ -84,20 +60,20 @@ public class NonPreemptivePriority extends SchedulingAlgorithm {
     public static void main(String[] args) {
         NonPreemptivePriority np = new NonPreemptivePriority();
         //Example 1
-        np.addProcess(new Process(0, 6, 3));
-        np.addProcess(new Process(1, 4, 3));
-        np.addProcess(new Process(5, 6, 1));
-        np.addProcess(new Process(6, 6, 1));
-        np.addProcess(new Process(7, 6, 5));
-        np.addProcess(new Process(8, 6, 6));
+        // np.addProcess(new Process(0, 6, 3));
+        // np.addProcess(new Process(1, 4, 3));
+        // np.addProcess(new Process(5, 6, 1));
+        // np.addProcess(new Process(6, 6, 1));
+        // np.addProcess(new Process(7, 6, 5));
+        // np.addProcess(new Process(8, 6, 6));
 
         //Example 2
-        // np.addProcess(new Process(0, 8, 2));
-        // np.addProcess(new Process(4, 15, 5));
-        // np.addProcess(new Process(7, 9, 3));
-        // np.addProcess(new Process(13, 5, 1));
-        // np.addProcess(new Process(9, 13, 4));
-        // np.addProcess(new Process(0, 6, 1));
+        np.addProcess(new Process(0, 8, 2));
+        np.addProcess(new Process(4, 15, 5));
+        np.addProcess(new Process(7, 9, 3));
+        np.addProcess(new Process(13, 5, 1));
+        np.addProcess(new Process(9, 13, 4));
+        np.addProcess(new Process(0, 6, 1));
 
         np.simulateSchedule();
 
