@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -7,28 +8,31 @@ import java.util.TreeSet;
 public class PreemptiveSJF extends SchedulingAlgorithm {
     private Process CPUprocess;
     private LinkedHashSet<Process> readyPoll = new LinkedHashSet<>();
-    
+
     @Override
     public void simulateSchedule() {
         boolean runningProcess = false;
         int inCPUtime = 0;
         Process oldProcess = null;
-        Process current = null;
+        Process nextProcess = null;
+        Process arrived = null;
+        Process previous = null;
+        ArrayList<Process> index = new ArrayList<Process>();
 
         super.initializeSchedule();
-        
-        for (int i=0; i<super.schedule.length; i++) {
+
+        for (int i = 0; i < super.schedule.length; i++) {
             TreeSet<Process> arrivedProcess = new TreeSet<>(Collections.reverseOrder());
-            for (Process p: processes) {
+            for (Process p : processes) {
                 if (p.getArrivalTime() == i) {
                     arrivedProcess.add(p);
-                    current = p;
+                    arrived = p;
+                    index.add(arrived);                    
                 }
             }
-            
-            for (Process ap: arrivedProcess) {
+
+            for (Process ap : arrivedProcess) {
                 readyPoll.add(ap);
-                
             }
             arrivedProcess.clear();
 
@@ -37,16 +41,27 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                 oldProcess = null;
             }
 
-            if (!runningProcess) {
+            if (!runningProcess || (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
+                    && arrived.getRemainingBurstTime() != 0 )) {
                 if (readyPoll.size() > 1) {
-                    PriorityQueue<Process> pq = new PriorityQueue<>(readyPoll.size(), (p1, p2) -> p1.getBurstTime() - p2.getBurstTime());
+                    PriorityQueue<Process> pq = new PriorityQueue<>(readyPoll.size(),
+                            (p1, p2) -> p1.getBurstTime() - p2.getBurstTime());
                     pq.addAll(readyPoll);
                     readyPoll.clear();
                     readyPoll.addAll(pq);
                 }
-                if (readyPoll.iterator().hasNext()) {
-                    Process nextProcess = readyPoll.iterator().next();
+                if (readyPoll.iterator().hasNext() || (arrived.getBurstTime() < nextProcess.getRemainingBurstTime() && arrived.getRemainingBurstTime()!=0)) {
+                    nextProcess = readyPoll.iterator().next();
+                    if (arrived.getRemainingBurstTime()==nextProcess.getBurstTime()){
+                        nextProcess = index.get(0);
+                    }
+                    if (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
+                            && arrived.getRemainingBurstTime() != 0) {
+                        nextProcess = arrived;
+                    }                    
+
                     CPUprocess = nextProcess;
+                    previous = CPUprocess;
                     addProcessToSchedule(i, CPUprocess);
                     readyPoll.remove(nextProcess);
                     runningProcess = true;
@@ -57,27 +72,28 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
 
             CPUprocess.execute(1);
             inCPUtime++;
-            System.out.println("current: " + current.getBurstTime());
-            System.out.println("cpu: " + CPUprocess.getRemainingBurstTime());
-            if ((current != CPUprocess && current.getRemainingBurstTime() > CPUprocess.getRemainingBurstTime()) || CPUprocess.getRemainingBurstTime() <= 0) {
-                runningProcess = false;
-                inCPUtime = 0;
+            if ((CPUprocess == arrived && CPUprocess!=previous)|| CPUprocess.getRemainingBurstTime() <= 0) {
+            runningProcess = false;
+            inCPUtime = 0;         
 
-                // Keep track of this process if it hasn't finish executing
-                if (CPUprocess.getRemainingBurstTime() > 0) {
-                    oldProcess = CPUprocess;
-                }
-                // Keep track of finish time if it has finished executed
-                else {
-                    CPUprocess.setFinishTime(i + 1);
-                }
+            if (CPUprocess.getRemainingBurstTime() > 0) {
+            oldProcess = CPUprocess;
             }
+
+            else {
+            CPUprocess.setFinishTime(arrived.getArrivalTime());
+            index.remove(CPUprocess);
+            }
+            CPUprocess = arrived;
+
+            }
+            
         }
     }
 
     public static void main(String[] args) {
-        PreemptiveSJF npsjf = new PreemptiveSJF();
-        //Example 1
+        PreemptiveSJF psjf = new PreemptiveSJF();
+        // Example 1
         // np.addProcess(new Process(0, 6, 3));
         // np.addProcess(new Process(1, 4, 3));
         // np.addProcess(new Process(5, 6, 1));
@@ -85,18 +101,18 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
         // np.addProcess(new Process(7, 6, 5));
         // np.addProcess(new Process(8, 6, 6));
 
-        //Example 2
-        npsjf.addProcess(new Process(0, 8, 2));
-        npsjf.addProcess(new Process(0, 6, 1));
-        npsjf.addProcess(new Process(4, 15, 5));
-        npsjf.addProcess(new Process(9, 13, 4));
-        npsjf.addProcess(new Process(7, 9, 3));
-        npsjf.addProcess(new Process(13, 5, 1));
+        // Example 2
+        psjf.addProcess(new Process(0, 8, 2));
+        psjf.addProcess(new Process(0, 6, 1));
+        psjf.addProcess(new Process(4, 15, 5));
+        psjf.addProcess(new Process(9, 13, 4));
+        psjf.addProcess(new Process(7, 9, 3));
+        psjf.addProcess(new Process(13, 5, 1));
 
-        npsjf.simulateSchedule();
+        psjf.simulateSchedule();
 
-        System.out.println(Arrays.toString(npsjf.getSchedule()));
-        System.out.println("Average Turnaround Time: " + npsjf.calculateAveTurnaroundTime());
-        System.out.println("Average Waiting Time: " + npsjf.calculateAveWaitingTime());
+        System.out.println(Arrays.toString(psjf.getSchedule()));
+        System.out.println("Average Turnaround Time: " + psjf.calculateAveTurnaroundTime());
+        System.out.println("Average Waiting Time: " + psjf.calculateAveWaitingTime());
     }
 }
