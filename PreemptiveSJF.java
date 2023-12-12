@@ -81,7 +81,7 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
             }
 
             else {
-            CPUprocess.setFinishTime(arrived.getArrivalTime());
+            CPUprocess.setFinishTime(i+1);
             index.remove(CPUprocess);
             }
             CPUprocess = arrived;
