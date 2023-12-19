@@ -54,8 +54,11 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                 }
                 if (readyPoll.iterator().hasNext() || (arrived.getBurstTime() < nextProcess.getRemainingBurstTime() && arrived.getRemainingBurstTime()!=0)) {
                     nextProcess = readyPoll.iterator().next();
-                    if (arrived.getRemainingBurstTime()==nextProcess.getBurstTime()){
-                        nextProcess = index.get(0);
+                    for (int j = 0; j < index.size(); j++)
+                    {
+                        if (index.get(j).getRemainingBurstTime() == nextProcess.getBurstTime()){
+                            nextProcess = index.get(j);
+                        }
                     }
                     if (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
                             && arrived.getRemainingBurstTime() != 0) {
