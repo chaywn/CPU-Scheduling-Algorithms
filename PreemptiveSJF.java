@@ -17,6 +17,7 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
         Process nextProcess = null;
         Process arrived = null;
         Process previous = null;
+        Process current = null;
         ArrayList<Process> index = new ArrayList<Process>();
 
         super.initializeSchedule();
@@ -26,10 +27,10 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
             TreeSet<Process> arrivedProcess = new TreeSet<>(Collections.reverseOrder());
             for (Process p : processes) {
                 if (p.getArrivalTime() == i) {
-                    
+
                     arrivedProcess.add(p);
                     arrived = p;
-                    index.add(arrived);                    
+                    index.add(arrived);
                 }
             }
 
@@ -41,11 +42,11 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
             if (oldProcess != null) {
                 readyPoll.add(oldProcess);
                 oldProcess = null;
-                
+
             }
 
             if (!runningProcess || (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
-                    && arrived.getRemainingBurstTime() != 0 )) {
+                    && arrived.getRemainingBurstTime() != 0)) {
                 if (readyPoll.size() > 1) {
                     PriorityQueue<Process> pq = new PriorityQueue<>(readyPoll.size(),
                             (p1, p2) -> p1.getBurstTime() - p2.getBurstTime());
@@ -53,28 +54,29 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                     readyPoll.clear();
                     readyPoll.addAll(pq);
                 }
-                if (readyPoll.iterator().hasNext() || (arrived.getBurstTime() < nextProcess.getRemainingBurstTime() && arrived.getRemainingBurstTime()!=0)) {
+                if (readyPoll.iterator().hasNext() || (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
+                        && arrived.getRemainingBurstTime() != 0)) {
                     nextProcess = readyPoll.iterator().next();
-                   // System.out.println("Original Next process: " + nextProcess);
-                    for (int j = 0; j < index.size(); j++)
-                    {
-                        if (index.get(j).getRemainingBurstTime() == nextProcess.getRemainingBurstTime()){
+                    // System.out.println("Original Next process: " + nextProcess);
+                    for (int j = 0; j < index.size(); j++) {
+                        if (index.get(j).getRemainingBurstTime() == nextProcess.getRemainingBurstTime()
+                                && current != index.get(j)) {
+                            System.out.println("Index: " + index.get(j));
+
                             nextProcess = index.get(j);
-                           // System.out.println("Index get j: " + nextProcess);
 
                             break;
                         }
                     }
                     if (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
                             && arrived.getRemainingBurstTime() != 0) {
-                                nextProcess = arrived;
-                        
-                    }                    
+                        nextProcess = arrived;
+
+                    } else {
+
+                    }
                     previous = CPUprocess;
                     CPUprocess = nextProcess;
-                    System.out.println("Previous process: " + previous);
-                    System.out.println("Next process: " + nextProcess);
-
                     addProcessToSchedule(i, CPUprocess);
                     readyPoll.remove(nextProcess);
                     runningProcess = true;
@@ -85,23 +87,29 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
 
             CPUprocess.execute(1);
             inCPUtime++;
-            if (nextProcess==arrived||CPUprocess.getRemainingBurstTime() <= 0) {
-            
-            runningProcess = false;
-            inCPUtime = 0;         
+            if (nextProcess == arrived && current != arrived|| CPUprocess.getRemainingBurstTime() <= 0) {
 
-            if (CPUprocess.getRemainingBurstTime() > 0) {
-            oldProcess = CPUprocess;
+                runningProcess = false;
+                inCPUtime = 0;
+
+                if (CPUprocess.getRemainingBurstTime() > 0) {
+                    oldProcess = CPUprocess;
+                }
+
+                else {
+                    CPUprocess.setFinishTime(i + 1);
+                    index.remove(CPUprocess);
+                }
+                current = CPUprocess;
+                CPUprocess = arrived;
+
+                System.out.println("Previous process: " + previous);
+                System.out.println("Next process: " + nextProcess);
+                System.out.println("CPU process: " + CPUprocess);
+                System.out.println("Current process: " + current);
+
             }
 
-            else {
-            CPUprocess.setFinishTime(i+1);
-            index.remove(CPUprocess);
-            }
-            CPUprocess = arrived;
-
-            }
-            
         }
     }
 
