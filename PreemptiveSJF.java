@@ -22,6 +22,7 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
         super.initializeSchedule();
 
         for (int i = 0; i < super.schedule.length; i++) {
+            System.out.println("Time: " + i);
             TreeSet<Process> arrivedProcess = new TreeSet<>(Collections.reverseOrder());
             for (Process p : processes) {
                 if (p.getArrivalTime() == i) {
@@ -54,10 +55,14 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                 }
                 if (readyPoll.iterator().hasNext() || (arrived.getBurstTime() < nextProcess.getRemainingBurstTime() && arrived.getRemainingBurstTime()!=0)) {
                     nextProcess = readyPoll.iterator().next();
+                   // System.out.println("Original Next process: " + nextProcess);
                     for (int j = 0; j < index.size(); j++)
                     {
-                        if (index.get(j).getRemainingBurstTime() == nextProcess.getBurstTime()){
+                        if (index.get(j).getRemainingBurstTime() == nextProcess.getRemainingBurstTime()){
                             nextProcess = index.get(j);
+                           // System.out.println("Index get j: " + nextProcess);
+
+                            break;
                         }
                     }
                     if (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
@@ -67,7 +72,9 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                     }                    
                     previous = CPUprocess;
                     CPUprocess = nextProcess;
-                    
+                    System.out.println("Previous process: " + previous);
+                    System.out.println("Next process: " + nextProcess);
+
                     addProcessToSchedule(i, CPUprocess);
                     readyPoll.remove(nextProcess);
                     runningProcess = true;
@@ -78,7 +85,7 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
 
             CPUprocess.execute(1);
             inCPUtime++;
-            if ((arrived==nextProcess)||CPUprocess.getRemainingBurstTime() <= 0) {
+            if (nextProcess==arrived||CPUprocess.getRemainingBurstTime() <= 0) {
             
             runningProcess = false;
             inCPUtime = 0;         
