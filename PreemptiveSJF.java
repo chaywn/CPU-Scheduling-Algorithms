@@ -25,6 +25,7 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
             TreeSet<Process> arrivedProcess = new TreeSet<>(Collections.reverseOrder());
             for (Process p : processes) {
                 if (p.getArrivalTime() == i) {
+                    
                     arrivedProcess.add(p);
                     arrived = p;
                     index.add(arrived);                    
@@ -39,6 +40,7 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
             if (oldProcess != null) {
                 readyPoll.add(oldProcess);
                 oldProcess = null;
+                
             }
 
             if (!runningProcess || (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
@@ -50,18 +52,19 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                     readyPoll.clear();
                     readyPoll.addAll(pq);
                 }
-                if (readyPoll.iterator().hasNext() || (arrived.getBurstTime() < nextProcess.getRemainingBurstTime() && arrived.getRemainingBurstTime()!=0)) {
+                if (readyPoll.iterator().hasNext()) {
                     nextProcess = readyPoll.iterator().next();
                     if (arrived.getRemainingBurstTime()==nextProcess.getBurstTime()){
                         nextProcess = index.get(0);
                     }
                     if (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
                             && arrived.getRemainingBurstTime() != 0) {
-                        nextProcess = arrived;
+                                nextProcess = arrived;
+                        
                     }                    
-
-                    CPUprocess = nextProcess;
                     previous = CPUprocess;
+                    CPUprocess = nextProcess;
+                    
                     addProcessToSchedule(i, CPUprocess);
                     readyPoll.remove(nextProcess);
                     runningProcess = true;
@@ -72,7 +75,8 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
 
             CPUprocess.execute(1);
             inCPUtime++;
-            if ((CPUprocess == arrived && CPUprocess!=previous)|| CPUprocess.getRemainingBurstTime() <= 0) {
+            if ((CPUprocess!=previous)||CPUprocess.getRemainingBurstTime() <= 0) {
+            
             runningProcess = false;
             inCPUtime = 0;         
 
