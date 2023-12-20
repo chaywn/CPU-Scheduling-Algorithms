@@ -57,6 +57,11 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                         && arrived.getRemainingBurstTime() != 0)) {
                     nextProcess = readyPoll.iterator().next();
                     
+                    if (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
+                            && arrived.getRemainingBurstTime() != 0) {
+                        nextProcess = arrived;
+
+                    }
                     for (int j = 0; j < index.size(); j++) {
                         if (index.get(j).getRemainingBurstTime() == nextProcess.getRemainingBurstTime()
                                 && current != index.get(j)) {
@@ -65,13 +70,7 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                             break;
                         }
                     }
-                    if (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
-                            && arrived.getRemainingBurstTime() != 0) {
-                        nextProcess = arrived;
-
-                    } else {
-
-                    }
+                    
                     previous = CPUprocess;
                     CPUprocess = nextProcess;
                     if (readyPoll.iterator().next()!=current)
