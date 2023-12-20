@@ -23,7 +23,6 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
         super.initializeSchedule();
 
         for (int i = 0; i < super.schedule.length; i++) {
-            System.out.println("Time: " + i);
             TreeSet<Process> arrivedProcess = new TreeSet<>(Collections.reverseOrder());
             for (Process p : processes) {
                 if (p.getArrivalTime() == i) {
@@ -57,12 +56,10 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                 if (readyPoll.iterator().hasNext() || (arrived.getBurstTime() < nextProcess.getRemainingBurstTime()
                         && arrived.getRemainingBurstTime() != 0)) {
                     nextProcess = readyPoll.iterator().next();
-                    // System.out.println("Original Next process: " + nextProcess);
+                    
                     for (int j = 0; j < index.size(); j++) {
                         if (index.get(j).getRemainingBurstTime() == nextProcess.getRemainingBurstTime()
                                 && current != index.get(j)) {
-                            System.out.println("Index: " + index.get(j));
-
                             nextProcess = index.get(j);
 
                             break;
@@ -77,7 +74,10 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                     }
                     previous = CPUprocess;
                     CPUprocess = nextProcess;
-                    addProcessToSchedule(i, CPUprocess);
+                    if (readyPoll.iterator().next()!=current)
+                    {
+                        addProcessToSchedule(i, CPUprocess);
+                    }
                     readyPoll.remove(nextProcess);
                     runningProcess = true;
                 } else {
@@ -103,13 +103,9 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
                 current = CPUprocess;
                 CPUprocess = arrived;
 
-                System.out.println("Previous process: " + previous);
-                System.out.println("Next process: " + nextProcess);
-                System.out.println("CPU process: " + CPUprocess);
-                System.out.println("Current process: " + current);
+                
 
             }
-
         }
     }
 
