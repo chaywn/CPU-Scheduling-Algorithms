@@ -60,12 +60,12 @@ public class NonPreemptiveSJF extends SchedulingAlgorithm {
     public static void main(String[] args) {
         NonPreemptiveSJF npsjf = new NonPreemptiveSJF();
         //Example 1
-        // np.addProcess(new Process(0, 6, 3));
-        // np.addProcess(new Process(1, 4, 3));
-        // np.addProcess(new Process(5, 6, 1));
-        // np.addProcess(new Process(6, 6, 1));
-        // np.addProcess(new Process(7, 6, 5));
-        // np.addProcess(new Process(8, 6, 6));
+        // npsjf.addProcess(new Process(0, 6, 3));
+        // npsjf.addProcess(new Process(1, 4, 3));
+        // npsjf.addProcess(new Process(5, 6, 1));
+        // npsjf.addProcess(new Process(6, 6, 1));
+        // npsjf.addProcess(new Process(7, 6, 5));
+        // npsjf.addProcess(new Process(8, 6, 6));
 
         //Example 2
         npsjf.addProcess(new Process(0, 8, 2));

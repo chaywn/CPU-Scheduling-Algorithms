@@ -110,12 +110,12 @@ public class PreemptiveSJF extends SchedulingAlgorithm {
     public static void main(String[] args) {
         PreemptiveSJF psjf = new PreemptiveSJF();
         // Example 1
-        // np.addProcess(new Process(0, 6, 3));
-        // np.addProcess(new Process(1, 4, 3));
-        // np.addProcess(new Process(5, 6, 1));
-        // np.addProcess(new Process(6, 6, 1));
-        // np.addProcess(new Process(7, 6, 5));
-        // np.addProcess(new Process(8, 6, 6));
+        // psjf.addProcess(new Process(0, 6, 3));
+        // psjf.addProcess(new Process(1, 4, 3));
+        // psjf.addProcess(new Process(5, 6, 1));
+        // psjf.addProcess(new Process(6, 6, 1));
+        // psjf.addProcess(new Process(7, 6, 5));
+        // psjf.addProcess(new Process(8, 6, 6));
 
         // Example 2
         psjf.addProcess(new Process(0, 8, 2));
