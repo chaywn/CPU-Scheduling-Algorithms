@@ -26,12 +26,10 @@ Below are the instructions for compiling and running the program:
 
 1. Open your command prompt or terminal window and **cd** to the project folder (```../CPU-Scheduling-Algorithms```).
 
-2. Run the following command to compile all .java files in the project folder: 
-<br>
+2. Run the following command to compile all .java files in the project folder:  
   ```javac *.java```
 
-3. In the same directory, run the following command to start the program:
-<br>
+3. In the same directory, run the following command to start the program:  
   ```java Main```
 
 4. Optionally, run the [CPU-Scheduling-Algorithms](/CPU-Scheduling-Algorithms.jar) **JAR file** in the project folder to instantly start the program.
